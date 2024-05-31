@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(schema = "core")
@@ -12,13 +13,16 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(length = 36)
     private String id;
-    private LocalDateTime datetimeTransaction;
+    @Column(columnDefinition = "date")
+    private Date datetimeTransaction;
     @Column(precision = 18, scale = 2)
     private BigDecimal amount;
     @Column(length = 36)
     private String accountId;
     @Column(precision = 18, scale = 2)
     private BigDecimal balance;
+    @Column(precision = 18, scale = 2)
+    private BigDecimal newBalance;
 
     @ManyToOne
     @JoinColumn(name = "transaction_type_id")
@@ -27,12 +31,13 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(String id, LocalDateTime datetimeTransaction, BigDecimal amount, String accountId, BigDecimal balance, TransactionType transactionType) {
+    public Transaction(String id, Date datetimeTransaction, BigDecimal amount, String accountId, BigDecimal balance, BigDecimal newBalance, TransactionType transactionType) {
         this.id = id;
         this.datetimeTransaction = datetimeTransaction;
         this.amount = amount;
         this.accountId = accountId;
         this.balance = balance;
+        this.newBalance = newBalance;
         this.transactionType = transactionType;
     }
 
@@ -44,11 +49,11 @@ public class Transaction {
         this.id = id;
     }
 
-    public LocalDateTime getDatetimeTransaction() {
+    public Date getDatetimeTransaction() {
         return datetimeTransaction;
     }
 
-    public void setDatetimeTransaction(LocalDateTime datetimeTransaction) {
+    public void setDatetimeTransaction(Date datetimeTransaction) {
         this.datetimeTransaction = datetimeTransaction;
     }
 
@@ -74,6 +79,14 @@ public class Transaction {
 
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
+    }
+
+    public BigDecimal getNewBalance() {
+        return newBalance;
+    }
+
+    public void setNewBalance(BigDecimal newBalance) {
+        this.newBalance = newBalance;
     }
 
     public TransactionType getTransactionType() {

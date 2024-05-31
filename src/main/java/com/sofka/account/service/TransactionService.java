@@ -40,13 +40,18 @@ public class TransactionService {
         Account account = accountRepository.findById(transaction.getAccountId()).orElseThrow(
                 () -> new RuntimeException("Account not found"));
 
-        // validate if it's a deposit or withdrawal
+        // validar si es deposito, retiro o transferencia
         switch (transactionType.getCode()) {
             case Constant.DEPOSIT_CODE:
+                transaction.setBalance(account.getBalance());
                 account.setBalance(account.getBalance().add(transaction.getAmount()));
                 break;
             case Constant.WITHDRAWAL_CODE:
-                account.setBalance(account.getBalance().add(transaction.getAmount().negate()));
+                //account.setBalance(account.getBalance().add(transaction.getAmount().negate()));
+                if (account.getBalance().compareTo(transaction.getAmount().abs()) < 0) {
+                    throw new RuntimeException("Insufficient funds");
+                }
+                account.setBalance(account.getBalance().subtract(transaction.getAmount().negate()));
                 break;
             case Constant.EXTERNAL_TRANSFER:
                 //external transfer with taxes and commision
@@ -57,6 +62,7 @@ public class TransactionService {
         }
 
         accountRepository.save(account);
+        transaction.setNewBalance(account.getBalance());
 
         return transactionRepository.save(transaction);
     }
