@@ -4,8 +4,10 @@ import com.sofka.account.model.Transaction;
 import com.sofka.account.service.TransactionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Tag(name = "Transaction", description = "API para gestionar transacciones")
@@ -29,5 +31,12 @@ public class TransactionRest {
     @PostMapping("/transaction")
     public Transaction addTransaction(@RequestBody Transaction transaction) {
         return transactionService.addTransaction(transaction);
+    }
+
+    @GetMapping("/transactions/search")
+    public List<Transaction> getTransactionsByDateRange(
+            @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date from,
+            @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date to) {
+        return transactionService.getTransactionsByDateRange(from, to);
     }
 }

@@ -1,5 +1,6 @@
 package com.sofka.account.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -24,6 +25,7 @@ public class Transaction {
     @Column(precision = 18, scale = 2)
     private BigDecimal newBalance;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "transaction_type_id")
     private TransactionType transactionType;
