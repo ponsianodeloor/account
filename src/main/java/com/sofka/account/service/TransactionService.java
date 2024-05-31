@@ -10,7 +10,10 @@ import com.sofka.account.service.utils.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Service
 public class TransactionService {
@@ -55,10 +58,13 @@ public class TransactionService {
                 break;
             case Constant.WITHDRAWAL_CODE:
                 // Validar si hay suficiente saldo
-                if (account.getBalance().compareTo(transaction.getAmount().abs()) < 0) {
-                    throw new RuntimeException("Insufficient funds");
+                transaction.setBalance(account.getBalance());
+                account.setBalance(account.getBalance().subtract(transaction.getAmount().abs()));
+
+                //compare if the balance is less than 0
+                if (account.getBalance().compareTo(Constant.ZERO) < 0) {
+                    throw new RuntimeException("Insufficient balance");
                 }
-                account.setBalance(account.getBalance().subtract(transaction.getAmount().negate()));
                 break;
             case Constant.EXTERNAL_TRANSFER:
                 //external transfer with taxes and commision
@@ -72,6 +78,10 @@ public class TransactionService {
         transaction.setNewBalance(account.getBalance());
 
         return transactionRepository.save(transaction);
+    }
+
+    public List<Transaction> getTransactionsByDateRange(Date from, Date to) {
+        return transactionRepository.findByDatetimeTransactionBetween(from, to);
     }
 
 
