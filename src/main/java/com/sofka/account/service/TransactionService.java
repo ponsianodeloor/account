@@ -31,12 +31,19 @@ public class TransactionService {
         return transactionRepository.findById(id).orElseThrow(() -> new RuntimeException("Transaction not found"));
     }
 
+    /**
+     * Agregar transaccion puede ser deposito, retiro o transferencia
+     * @param transaction
+     * @return
+     * @throws RuntimeException
+     * @Author: Ponsiano De Loor
+     */
     public Transaction addTransaction(Transaction transaction) {
-        //buscar transaccionType
+        // Identificar el tipo de transaccion con transaccionType
         TransactionType transactionType = transactionTypeRepository.findById(transaction.getTransactionType().getId()).orElseThrow(
                 () -> new RuntimeException("Transaction type not found"));
 
-        //buscar cuenta
+        // Buscar cuenta bancaria
         Account account = accountRepository.findById(transaction.getAccountId()).orElseThrow(
                 () -> new RuntimeException("Account not found"));
 
@@ -47,7 +54,7 @@ public class TransactionService {
                 account.setBalance(account.getBalance().add(transaction.getAmount()));
                 break;
             case Constant.WITHDRAWAL_CODE:
-                //account.setBalance(account.getBalance().add(transaction.getAmount().negate()));
+                // Validar si hay suficiente saldo
                 if (account.getBalance().compareTo(transaction.getAmount().abs()) < 0) {
                     throw new RuntimeException("Insufficient funds");
                 }
