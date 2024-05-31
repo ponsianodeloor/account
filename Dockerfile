@@ -8,7 +8,7 @@ LABEL maintainer="ponsianodeloor@example.com"
 VOLUME /tmp
 
 # Make port 8080 available to the world outside this container
-EXPOSE 8080
+EXPOSE 8088
 
 # The application's war file
 ARG WAR_FILE=target/account-0.0.1-SNAPSHOT.war
