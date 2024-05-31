@@ -1,5 +1,6 @@
 package com.sofka.account.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -20,6 +21,7 @@ public class TransactionType {
     private String description;
     private Boolean state;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "transactionType", cascade = {CascadeType.ALL})
     private Set<Transaction> transactions = new HashSet<>();
 

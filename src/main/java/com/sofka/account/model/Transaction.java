@@ -24,8 +24,10 @@ public class Transaction {
     private BigDecimal balance;
     @Column(precision = 18, scale = 2)
     private BigDecimal newBalance;
+    @Column(columnDefinition = "boolean default true")
+    private Boolean state;
+    private String userCreatedAt;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "transaction_type_id")
     private TransactionType transactionType;
@@ -33,13 +35,15 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(String id, Date datetimeTransaction, BigDecimal amount, String accountId, BigDecimal balance, BigDecimal newBalance, TransactionType transactionType) {
+    public Transaction(String id, Date datetimeTransaction, BigDecimal amount, String accountId, BigDecimal balance, BigDecimal newBalance, Boolean state, String userCreatedAt, TransactionType transactionType) {
         this.id = id;
         this.datetimeTransaction = datetimeTransaction;
         this.amount = amount;
         this.accountId = accountId;
         this.balance = balance;
         this.newBalance = newBalance;
+        this.state = state;
+        this.userCreatedAt = userCreatedAt;
         this.transactionType = transactionType;
     }
 
@@ -89,6 +93,22 @@ public class Transaction {
 
     public void setNewBalance(BigDecimal newBalance) {
         this.newBalance = newBalance;
+    }
+
+    public Boolean getState() {
+        return state;
+    }
+
+    public void setState(Boolean state) {
+        this.state = state;
+    }
+
+    public String getUserCreatedAt() {
+        return userCreatedAt;
+    }
+
+    public void setUserCreatedAt(String userCreatedAt) {
+        this.userCreatedAt = userCreatedAt;
     }
 
     public TransactionType getTransactionType() {

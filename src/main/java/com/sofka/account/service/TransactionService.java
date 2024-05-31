@@ -1,5 +1,6 @@
 package com.sofka.account.service;
 
+import com.sofka.account.dto.TransactionUsernameSearchResponse;
 import com.sofka.account.model.Account;
 import com.sofka.account.model.Transaction;
 import com.sofka.account.model.TransactionType;
@@ -10,10 +11,9 @@ import com.sofka.account.service.utils.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
@@ -74,14 +74,38 @@ public class TransactionService {
                 throw new RuntimeException("Transaction type not valid");
         }
 
+        // Guardar la transaccion
+        transaction.setState(true);
+
         accountRepository.save(account);
         transaction.setNewBalance(account.getBalance());
 
         return transactionRepository.save(transaction);
     }
 
+
     public List<Transaction> getTransactionsByDateRange(Date from, Date to) {
         return transactionRepository.findByDatetimeTransactionBetween(from, to);
+    }
+
+    public List<TransactionUsernameSearchResponse> getTransactionsByUsernameDateRange(String username,Date from, Date to) {
+        List<Transaction> transactions = transactionRepository.findByDatetimeTransactionBetween(from, to);
+        return transactions.stream()
+                .map(transaction -> {
+                    TransactionUsernameSearchResponse dto = new TransactionUsernameSearchResponse();
+                    Account account = accountRepository.findById(transaction.getAccountId()).orElseThrow(
+                            () -> new RuntimeException("Account not found"));
+                    dto.setFecha(transaction.getDatetimeTransaction());
+                    dto.setNumeroCuenta(account.getAccountNumber());
+                    dto.setSaldoInicial(transaction.getBalance());
+                    dto.setTipo(transaction.getTransactionType().getName());
+                    dto.setEstado(transaction.getState());
+                    dto.setMovimiento(transaction.getAmount());
+                    dto.setSaldoDisponible(transaction.getNewBalance());
+                    // Set other properties
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
 

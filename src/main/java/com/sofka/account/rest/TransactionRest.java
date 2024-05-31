@@ -1,5 +1,6 @@
 package com.sofka.account.rest;
 
+import com.sofka.account.dto.TransactionUsernameSearchResponse;
 import com.sofka.account.model.Transaction;
 import com.sofka.account.service.TransactionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,5 +39,13 @@ public class TransactionRest {
             @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date from,
             @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date to) {
         return transactionService.getTransactionsByDateRange(from, to);
+    }
+
+    @GetMapping("/transactions/username/{username}/search")
+    public List<TransactionUsernameSearchResponse> getTransactionsByUsernameDateRange(
+            @PathVariable("username") String username,
+            @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date from,
+            @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date to) {
+        return transactionService.getTransactionsByUsernameDateRange(username, from, to);
     }
 }
