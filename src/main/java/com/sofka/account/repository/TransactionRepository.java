@@ -10,4 +10,5 @@ import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, String> {
     List<Transaction> findByDatetimeTransactionBetween(Date datetimeTransaction, Date datetimeTransaction2);
+    List<Transaction> findByUserCreatedAtAndDatetimeTransactionBetween(String username, Date datetimeTransaction, Date datetimeTransaction2);
 }

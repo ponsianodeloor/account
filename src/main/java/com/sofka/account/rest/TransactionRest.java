@@ -45,7 +45,7 @@ public class TransactionRest {
     public List<TransactionUsernameSearchResponse> getTransactionsByUsernameDateRange(
             @PathVariable("username") String username,
             @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date from,
-            @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date to) {
+            @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date to) throws Exception {
         return transactionService.getTransactionsByUsernameDateRange(username, from, to);
     }
 }

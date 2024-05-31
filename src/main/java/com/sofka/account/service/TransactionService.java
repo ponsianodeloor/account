@@ -1,9 +1,7 @@
 package com.sofka.account.service;
 
 import com.sofka.account.dto.TransactionUsernameSearchResponse;
-import com.sofka.account.model.Account;
-import com.sofka.account.model.Transaction;
-import com.sofka.account.model.TransactionType;
+import com.sofka.account.model.*;
 import com.sofka.account.repository.AccountRepository;
 import com.sofka.account.repository.TransactionRepository;
 import com.sofka.account.repository.TransactionTypeRepository;
@@ -13,10 +11,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
+    //private static final Logger LOGGER = Logger.getLogger(TransactionService.class.getName());
+
     @Autowired
     private TransactionRepository transactionRepository;
 
@@ -25,6 +26,12 @@ public class TransactionService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private ClientService clientService;
+
+    @Autowired
+    private PersonService personService;
 
     public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll();
@@ -88,14 +95,20 @@ public class TransactionService {
         return transactionRepository.findByDatetimeTransactionBetween(from, to);
     }
 
-    public List<TransactionUsernameSearchResponse> getTransactionsByUsernameDateRange(String username,Date from, Date to) {
-        List<Transaction> transactions = transactionRepository.findByDatetimeTransactionBetween(from, to);
+    public List<TransactionUsernameSearchResponse> getTransactionsByUsernameDateRange(String username,Date from, Date to) throws Exception {
+        Client client = clientService.getClientByUsername(username);
+        //LOGGER.info("Client: " + client.getId());
+        Person person = personService.getPersonByClientId(client.getId());
+        //LOGGER.info("Person: " + person.getName() + " " + person.getLastname());
+
+        List<Transaction> transactions = transactionRepository.findByUserCreatedAtAndDatetimeTransactionBetween(username, from, to);
         return transactions.stream()
                 .map(transaction -> {
                     TransactionUsernameSearchResponse dto = new TransactionUsernameSearchResponse();
                     Account account = accountRepository.findById(transaction.getAccountId()).orElseThrow(
                             () -> new RuntimeException("Account not found"));
                     dto.setFecha(transaction.getDatetimeTransaction());
+                    dto.setCliente(person.getName() + " " + person.getLastname());
                     dto.setNumeroCuenta(account.getAccountNumber());
                     dto.setSaldoInicial(transaction.getBalance());
                     dto.setTipo(transaction.getTransactionType().getName());
@@ -107,6 +120,4 @@ public class TransactionService {
                 })
                 .collect(Collectors.toList());
     }
-
-
 }
