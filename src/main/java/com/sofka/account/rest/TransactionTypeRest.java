@@ -22,7 +22,7 @@ public class TransactionTypeRest {
     }
 
     @GetMapping("/transactionType/{id}")
-    public TransactionType getTransactionTypeById(String id) {
+    public TransactionType getTransactionTypeById(@PathVariable("id") String id) {
         return transactionTypeService.getTransactionTypeById(id);
     }
 

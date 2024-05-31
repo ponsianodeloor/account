@@ -28,7 +28,7 @@ public class AccountRest {
     }
 
     @GetMapping("/account/{id}")
-    public Account getAccountById(String id) {
+    public Account getAccountById(@PathVariable("id") String id) {
         return accountService.getAccountById(id);
     }
 
@@ -38,7 +38,7 @@ public class AccountRest {
     }
 
     @GetMapping("/account/{id}/type")
-    public AccountType getAccountTypeByAccountId(@PathVariable String id) {
+    public AccountType getAccountTypeByAccountId(@PathVariable("id") String id) {
         Account account = accountService.getAccountById(id);
         return account.getAccountType();
     }

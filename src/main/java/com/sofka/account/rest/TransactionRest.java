@@ -22,13 +22,12 @@ public class TransactionRest {
     }
 
     @GetMapping("/transaction/{id}")
-    public Transaction getTransactionById(String id) {
+    public Transaction getTransactionById(@PathVariable("id") String id) {
         return transactionService.getTransactionById(id);
     }
 
     @PostMapping("/transaction")
     public Transaction addTransaction(@RequestBody Transaction transaction) {
-
         return transactionService.addTransaction(transaction);
     }
 }
